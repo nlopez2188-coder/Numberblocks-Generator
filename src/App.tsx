@@ -194,6 +194,8 @@ export default function App() {
   const [isStepSquad, setIsStepSquad] = useState(false);
   const [showSetPrompt, setShowSetPrompt] = useState(false);
   const [promptInputValue, setPromptInputValue] = useState('');
+  const [showSixtiethsPrompt, setShowSixtiethsPrompt] = useState(false);
+  const [sixtiethsInputValue, setSixtiethsInputValue] = useState('');
 
   useEffect(() => {
     let interval: any;
@@ -223,11 +225,8 @@ export default function App() {
         setIsFOF(prev => !prev);
         break;
       case 'addX':
-        const input = prompt('Enter a value to add/subtract (e.g. 5 or -10):');
-        if (input !== null) {
-          const val = parseFloat(input);
-          if (!isNaN(val)) addNum(val);
-        }
+        setShowSixtiethsPrompt(prev => !prev);
+        if (!showSixtiethsPrompt) setSixtiethsInputValue('');
         break;
       case 'center':
         setIsJumping(true);
@@ -543,6 +542,90 @@ export default function App() {
                     setShowSetPrompt(false);
                   }}
                   className="flex-[2] bg-[#15803d] py-4 md:py-6 text-white text-3xl md:text-5xl font-black border-[8px] border-white shadow-[0_15px_30px_rgba(0,0,0,0.4),0_10px_0_#166534] hover:bg-[#166534] active:translate-y-4 active:shadow-none transition-all italic tracking-tighter"
+                >
+                  ENTER
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+        {/* SIXTIETHS Prompt - Numeric Keypad with Bubble */}
+        {showSixtiethsPrompt && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-[#4C1D95] flex flex-col items-center justify-center p-4 overflow-hidden"
+          >
+            {/* Background Glow */}
+            <div className="absolute inset-0 bg-[#4C1D95] overflow-hidden">
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] opacity-20 bg-[radial-gradient(circle_at_center,white_0%,transparent_70%)]" />
+            </div>
+
+            {/* Bubble - Floating in overlay */}
+            <motion.div 
+              initial={{ y: -20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              className="relative z-20 bg-white px-8 py-4 rounded-[40px] border-[6px] border-gray-300 shadow-2xl mb-6 max-w-lg"
+            >
+              <p className="text-gray-600 font-extrabold text-3xl md:text-5xl tracking-tighter">Plus how many sixtieths?</p>
+              <div className="absolute -bottom-6 right-12 w-8 h-8 bg-white border-r-[6px] border-b-[6px] border-gray-300 rotate-45" />
+            </motion.div>
+
+            <div className="relative z-10 flex flex-col items-center w-full max-w-2xl">
+              {/* Number Display Box (Shows what user is typing) */}
+              <div className="bg-white w-full py-6 text-center text-black text-6xl md:text-[100px] leading-none font-black mb-8 border-[10px] border-black shadow-[inset_0_10px_30px_rgba(0,0,0,0.2),0_15px_0_rgba(0,0,0,0.1)] relative">
+                {sixtiethsInputValue || '0'}
+                {/* Visual calculation hint */}
+                {sixtiethsInputValue && (
+                  <div className="absolute bottom-1 right-2 text-xl font-bold opacity-30">
+                    +{(parseFloat(sixtiethsInputValue)/60).toFixed(4)}
+                  </div>
+                )}
+                <motion.div 
+                  animate={{ opacity: [1, 0] }}
+                  transition={{ repeat: Infinity, duration: 0.8 }}
+                  className="inline-block w-2 md:w-3 h-12 md:h-20 bg-purple-500 ml-2 align-middle"
+                />
+              </div>
+
+              {/* Numeric Keypad */}
+              <div className="grid grid-cols-3 gap-3 md:gap-4 w-full mb-8">
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9, '.', 0, 'DEL'].map((val) => (
+                  <button
+                    key={val}
+                    onClick={() => {
+                      if (val === 'DEL') {
+                        setSixtiethsInputValue(prev => prev.slice(0, -1));
+                      } else {
+                        if (val === '.' && sixtiethsInputValue.includes('.')) return;
+                        setSixtiethsInputValue(prev => prev + val);
+                      }
+                    }}
+                    className={`h-16 md:h-24 text-3xl md:text-5xl font-black rounded-lg border-[6px] border-black shadow-[0_8px_0_rgba(0,0,0,0.3)] active:translate-y-2 active:shadow-none transition-all flex items-center justify-center ${
+                      val === 'DEL' ? 'bg-[#991B1B] text-white' : 'bg-white text-black hover:bg-gray-100'
+                    }`}
+                  >
+                    {val}
+                  </button>
+                ))}
+              </div>
+
+              <div className="flex gap-4 w-full text-center">
+                <button 
+                  onClick={() => setShowSixtiethsPrompt(false)}
+                  className="flex-1 bg-white py-4 md:py-6 text-black text-2xl md:text-3xl font-black border-[8px] border-black shadow-[0_10px_0_rgba(0,0,0,0.2)] hover:bg-gray-100 active:translate-y-2 active:shadow-none transition-all italic tracking-tight"
+                >
+                  CANCEL
+                </button>
+                <button 
+                  onClick={() => {
+                    const val = parseFloat(sixtiethsInputValue);
+                    if (!isNaN(val)) addNum(val / 60);
+                    setShowSixtiethsPrompt(false);
+                  }}
+                  className="flex-[2] bg-[#4C1D95] py-4 md:py-6 text-white text-3xl md:text-5xl font-black border-[8px] border-white shadow-[0_15px_30px_rgba(0,0,0,0.4),0_10px_0_#2E1065] hover:bg-[#2E1065] active:translate-y-4 active:shadow-none transition-all italic tracking-tighter"
                 >
                   ENTER
                 </button>
