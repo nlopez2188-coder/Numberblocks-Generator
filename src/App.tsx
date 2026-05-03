@@ -39,6 +39,17 @@ const CHARACTER_MODELS: Record<number, { color: string; eyes: number; columns: n
   22: { color: '#06B6D4', eyes: 2, columns: 2, shape: 'rect', pattern: 'white-sides-22' },
   23: { color: '#FBBF24', eyes: 3, columns: 1, shape: 'tall', pattern: 'spiky' },
   25: { color: '#FFFFFF', eyes: 2, columns: 2, shape: 'rect', pattern: 'white-sides-25' },
+  100: { color: '#EF4444', eyes: 2, columns: 4, shape: 'giant', pattern: 'grid' },
+  1000: { color: '#FBBF24', eyes: 2, columns: 5, shape: 'giant', pattern: 'glow' },
+  10000: { color: '#06B6D4', eyes: 2, columns: 6, shape: 'giant', pattern: 'matrix' },
+  100000: { color: '#9333EA', eyes: 2, columns: 8, shape: 'giant', pattern: 'nebula' },
+  1000000: { color: '#D946EF', eyes: 2, columns: 10, shape: 'giant', pattern: 'glitch' },
+  10000000: { color: '#EF4444', eyes: 4, columns: 12, shape: 'giant', pattern: 'multi-eye' },
+  100000000: { color: '#FBBF24', eyes: 6, columns: 14, shape: 'giant', pattern: 'solar' },
+  1000000000: { color: '#22C55E', eyes: 8, columns: 16, shape: 'giant', pattern: 'cosmic' },
+  10000000000: { color: '#06B6D4', eyes: 10, columns: 18, shape: 'giant', pattern: 'void' },
+  100000000000: { color: '#9333EA', eyes: 12, columns: 20, shape: 'giant', pattern: 'omega' },
+  1000000000000: { color: '#FFFFFF', eyes: 14, columns: 24, shape: 'giant', pattern: 'trillion' },
 };
 
 const PAGES = [
@@ -61,6 +72,7 @@ const PAGES = [
     { pos: { label: '+100 000 000', value: 100000000 }, neg: { label: '-100 000 000', value: -100000000 }, color: 'checkered-red' },
     { pos: { label: '+1 000 000 000', value: 1000000000 }, neg: { label: '-1 000 000 000', value: -1000000000 }, color: 'red' },
     { pos: { label: '+10 000 000 000', value: 10000000000 }, neg: { label: '-10 000 000 000', value: -10000000000 }, color: 'white-red-border' },
+    { pos: { label: '+1 000 000 000 000', value: 1000000000000 }, neg: { label: '-1 000 000 000 000', value: -1000000000000 }, color: 'dark-checkered-red' },
   ],
   [
     { label: 'SET', action: 'set', color: 'white' },
@@ -267,6 +279,14 @@ const renderUndergroundLayer = (num: number) => {
   );
 };
 
+const Watermark = () => (
+  <div className="fixed bottom-2 right-4 z-[100] pointer-events-none">
+    <p className="text-black/30 font-black text-xl italic tracking-tighter uppercase select-none drop-shadow-sm">
+      V1.4 - Figured Out Fixing
+    </p>
+  </div>
+);
+
 export default function App() {
   const [num, setNum] = useState(0);
   const [isJumping, setIsJumping] = useState(false);
@@ -350,6 +370,7 @@ export default function App() {
   return (
     <div className={`relative h-screen w-screen overflow-hidden font-sans select-none transition-colors duration-500 ${isFOF ? 'bg-[#1E1B4B]' : 'bg-[#E0F2FE]'}`}>
       {/* Background World */}
+      <Watermark />
       {num < 0 ? (
         renderUndergroundLayer(num)
       ) : (
@@ -796,9 +817,9 @@ export default function App() {
             ) : CHARACTER_MODELS[num] ? (
               <div 
                 className={`transition-all duration-300 rounded-lg border-[6px] border-black/80 flex flex-col items-center justify-start py-4 relative shadow-2xl ${
-                  [4, 6, 8, 9, 10, 12, 14, 16, 17, 18, 19, 21, 22, 25].includes(num) ? 'w-36' : num === 20 ? 'w-48' : 'w-24'
+                  num >= 100 ? 'w-64 h-80' : [4, 6, 8, 9, 10, 12, 14, 16, 17, 18, 19, 21, 22, 25].includes(num) ? 'w-36' : num === 20 ? 'w-48' : 'w-24'
                 } ${
-                  num === 1 ? 'h-24' : [2, 4, 14, 16, 17, 18, 19, 21, 25].includes(num) ? 'h-32' : [3, 7, 13, 15, 22, 23].includes(num) ? 'h-48' : num === 20 ? 'h-64' : 'h-56'
+                  num >= 100 ? '' : num === 1 ? 'h-24' : [2, 4, 14, 16, 17, 18, 19, 21, 25].includes(num) ? 'h-32' : [3, 7, 13, 15, 22, 23].includes(num) ? 'h-48' : num === 20 ? 'h-64' : 'h-56'
                 }`}
                 style={{ background: CHARACTER_MODELS[num].color }}
               >
@@ -861,6 +882,38 @@ export default function App() {
                 )}
                 {CHARACTER_MODELS[num].pattern === 'spiky' && (
                    <div className="absolute -top-6 w-12 h-12 bg-yellow-400 rotate-45 border-2 border-black -z-10" />
+                )}
+                {CHARACTER_MODELS[num].pattern === 'grid' && (
+                   <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.05)_1px,transparent_1px)] bg-[size:10px_10px]" />
+                )}
+                {CHARACTER_MODELS[num].pattern === 'glow' && (
+                   <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.4)_0%,transparent_70%)] animate-pulse" />
+                )}
+                {CHARACTER_MODELS[num].pattern === 'matrix' && (
+                   <div className="absolute inset-0 opacity-40 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] overflow-hidden">
+                      <div className="flex flex-col gap-1 text-[8px] font-mono whitespace-nowrap -rotate-12">
+                         {[...Array(20)].map((_, i) => <div key={i} className="text-green-400 opacity-50">10101100101010100101</div>)}
+                      </div>
+                   </div>
+                )}
+                {CHARACTER_MODELS[num].pattern === 'glitch' && (
+                   <div className="absolute inset-0 overflow-hidden opacity-30">
+                      <div className="absolute inset-x-0 h-1 bg-white animate-bounce" style={{ top: '20%' }} />
+                      <div className="absolute inset-x-0 h-1 bg-cyan-400 animate-pulse" style={{ top: '50%' }} />
+                      <div className="absolute inset-x-0 h-1 bg-pink-500" style={{ top: '80%' }} />
+                   </div>
+                )}
+                {CHARACTER_MODELS[num].pattern === 'nebula' && (
+                   <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(255,255,255,0.2),transparent),radial-gradient(ellipse_at_bottom,rgba(0,0,0,0.2),transparent)]" />
+                )}
+                {CHARACTER_MODELS[num].pattern === 'cosmic' && (
+                   <div className="absolute inset-0 opacity-20 bg-[radial-gradient(white_1px,transparent_1px)] bg-[size:15px_15px] animate-spin-slow" />
+                )}
+                {CHARACTER_MODELS[num].pattern === 'trillion' && (
+                   <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="w-48 h-48 bg-white/10 rounded-full blur-3xl animate-pulse" />
+                      <div className="absolute text-white/5 font-black text-6xl rotate-45 select-none pointer-events-none">1 000 000 000 000</div>
+                   </div>
                 )}
 
                 {/* Eyes */}
@@ -981,7 +1034,7 @@ export default function App() {
                 <ChevronRight size={20} />
              </button>
            </div>
-           <span className="text-[#34D399] font-black italic text-2xl tracking-tighter drop-shadow-[0_2px_0_#064E3B]">VI.3.0</span>
+           <span className="text-[#34D399] font-black italic text-2xl tracking-tighter drop-shadow-[0_2px_0_#064E3B]">V1.4</span>
         </div>
       </aside>
 
@@ -999,10 +1052,10 @@ export default function App() {
           <div className="w-4 h-4 rounded-full bg-[#3B82F6] shadow-sm" />
           <input 
             type="range"
-            min="-10"
-            max="100"
+            min="-9"
+            max="1000000"
             step="1"
-            value={Math.min(100, Math.max(-10, num))}
+            value={Math.min(1000000, Math.max(-9, num))}
             onChange={handleSliderChange}
             className="flex-grow h-2 bg-[#10B981] rounded-full appearance-none cursor-pointer accent-[#3B82F6]"
           />
