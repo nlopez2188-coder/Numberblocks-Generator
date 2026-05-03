@@ -93,6 +93,85 @@ const getButtonStyle = (type: string, isToggled?: boolean, label?: string) => {
   }
 };
 
+const ClubIcon = ({ type, val, color, special, active }: { type: string, val: string | number, color?: string, special?: string, active?: boolean }) => {
+  const baseClass = "w-12 h-12 flex items-center justify-center relative transition-transform hover:scale-110 active:scale-95 cursor-pointer";
+  
+  if (type === 'box') {
+    return (
+      <div className={`${baseClass} bg-white border-2 border-black rounded-sm overflow-hidden flex flex-row items-stretch`}>
+         <div className="w-5 flex items-center justify-center font-black text-black text-sm border-r-2 border-black/20">{val}</div>
+         <div className="flex-1" style={{ background: color === 'rainbow' ? 'linear-gradient(to bottom, red, orange, yellow, green, blue, purple)' : color }} />
+      </div>
+    );
+  }
+
+  if (type === 'box-inv') {
+    return (
+      <div className={`${baseClass} bg-white border-2 border-black rounded-sm overflow-hidden flex flex-row items-stretch`}>
+         <div className="w-5 flex items-center justify-center font-black text-black text-sm border-r-2 border-black/20">{val}</div>
+         <div className="flex-1 bg-white" />
+      </div>
+    );
+  }
+
+  if (type === 'circle') {
+     return (
+        <div className={`${baseClass} bg-white border-2 border-black rounded-full shadow-[0_2px_0_rgba(0,0,0,0.2)] overflow-hidden scale-90`}>
+           <div className="w-full h-full flex items-center justify-center font-black text-black text-xl" 
+                style={special === 'rainbow' ? { background: 'linear-gradient(to bottom, red, orange, yellow, green, blue, purple)', color: 'white' } : {}}>
+             {val}
+           </div>
+        </div>
+     );
+  }
+
+  if (type === 'circle-special') {
+     return (
+        <div className={`${baseClass} bg-white border-2 border-black rounded-full shadow-[0_2px_0_rgba(0,0,0,0.2)] overflow-hidden scale-90`}>
+           <div className="w-full h-full flex items-center justify-center font-black text-black text-xl">
+             {val === 'cube' ? <div className="w-4 h-4 bg-red-600 border border-black" /> :
+              val === 'rect' ? <div className="w-5 h-5 bg-green-500 border border-black rounded-sm" /> :
+              val === 'cross' ? <div className="text-blue-500 text-2xl">+</div> : val}
+           </div>
+        </div>
+     );
+  }
+
+  if (type === 'club') {
+     return (
+        <div className={`${baseClass} bg-white border-2 border-black rounded-md shadow-md overflow-hidden ${active ? 'ring-4 ring-yellow-400 scale-110' : ''}`}>
+           {val === 'step' && (
+              <div className="flex flex-col gap-0.5 items-center justify-center p-1">
+                 <div className="w-8 h-2 bg-purple-600 border border-black" />
+                 <div className="w-6 h-2 bg-purple-600 border border-black mr-2" />
+                 <div className="w-4 h-2 bg-purple-600 border border-black mr-4" />
+              </div>
+           )}
+           {val === 'sq' && <div className="w-6 h-6 bg-pink-500 border-2 border-black rounded-sm flex items-center justify-center"><div className="w-2 h-2 bg-white rounded-full" /></div>}
+           {val === 'dots' && (
+              <div className="w-7 h-7 bg-pink-500 border-2 border-black rounded-sm p-1 grid grid-cols-2 gap-1">
+                 {[1,2,3,4].map(i => <div key={i} className="w-1.5 h-1.5 bg-[#EF4444] rounded-sm" />)}
+              </div>
+           )}
+           {val === 'rect' && <div className="w-7 h-7 bg-pink-400 border-2 border-black rounded-sm flex items-center justify-center p-0.5"><div className="w-full h-1/2 bg-red-500" /></div>}
+           {val === 'tray' && <div className="w-8 h-6 bg-blue-400 border-2 border-black rounded-sm flex items-center justify-center p-1"><div className="w-full h-full bg-orange-200 border-t-2 border-black" /></div>}
+           {val === 'one' && <div className="w-7 h-7 bg-yellow-100 border-2 border-black rounded-sm flex items-center justify-center text-xs font-black">1</div>}
+           {val === 'bars' && (
+              <div className="w-7 h-7 flex flex-col gap-1">
+                 <div className="flex-1 bg-green-500 border border-black" />
+                 <div className="flex-1 bg-yellow-400 border border-black" />
+                 <div className="flex-1 bg-red-500 border border-black" />
+              </div>
+           )}
+           {val === 'chip' && <div className="w-8 h-8 bg-blue-600 border-2 border-black rounded-sm flex items-center justify-center p-1 shadow-inner"><div className="w-4 h-4 bg-orange-400 border border-black" /></div>}
+           {val === 'pad' && <div className="w-6 h-8 bg-yellow-200 border-2 border-black rounded-sm flex flex-col items-center pt-1"><div className="w-4 h-0.5 bg-orange-400 mb-0.5" />{[1,2,3].map(i => <div key={i} className="w-4 h-[1px] bg-black/20 mb-0.5" />)}</div>}
+        </div>
+     );
+  }
+
+  return <div className={baseClass}>{val}</div>;
+};
+
 // --- Helper Functions ---
 
 const formatNumber = (n: number) => {
@@ -209,32 +288,89 @@ export default function App() {
       <AnimatePresence>
         {showClubs && (
           <motion.div 
-            initial={{ opacity: 0, scale: 0.9 }}
+            initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
-            className="absolute top-20 left-10 z-30 bg-white/90 backdrop-blur-md p-4 rounded-2xl border-4 border-[#4C1D95] shadow-2xl w-64"
+            exit={{ opacity: 0, scale: 0.95 }}
+            className="fixed inset-0 z-[60] bg-black/60 flex items-center justify-center p-4 backdrop-blur-sm"
           >
-            <h3 className="text-[#4C1D95] font-black text-xl mb-2 flex items-center gap-2">
-              <Menu size={20} /> CLUBS
-            </h3>
-            <div className="space-y-2">
-              {['Square Club', 'Step Squad', 'Team Terrible', 'The Octonaughts'].map(club => (
+            <div className="bg-[#EF4444] w-full max-w-4xl rounded-xl border-[6px] border-black shadow-2xl overflow-hidden relative">
+              {/* Header */}
+              <div className="bg-black/20 p-4 border-b-4 border-black/30 flex justify-between items-center">
+                <h3 className="text-white font-black text-3xl italic tracking-tighter drop-shadow-md">CLUBS & MODELS</h3>
                 <button 
-                  key={club} 
-                  onClick={() => {
-                    if (club === 'Step Squad') setIsStepSquad(!isStepSquad);
-                  }}
-                  className={`w-full text-left p-2 rounded-lg font-bold border-b-2 transition-colors ${
-                    club === 'Step Squad' && isStepSquad 
-                      ? 'bg-[#4C1D95] text-white border-white/40' 
-                      : 'bg-[#4C1D95]/10 text-[#4C1D95] border-[#4C1D95]/20 hover:bg-[#4C1D95]/20'
-                  }`}
+                  onClick={() => setShowClubs(false)}
+                  className="bg-white text-black font-black px-6 py-2 rounded-lg border-b-4 border-gray-400 active:translate-y-1 active:border-b-0"
                 >
-                  {club}
+                  CLOSE
                 </button>
-              ))}
+              </div>
+
+              {/* Grid Content */}
+              <div className="p-4 grid grid-rows-5 gap-2 overflow-x-auto no-scrollbar">
+                {/* Row 1: Digit Boxes (Green/Red background split) */}
+                <div className="flex gap-2">
+                  <div className="bg-[#22C55E] p-2 flex gap-2">
+                    <ClubIcon type="box" val={0} color="#D1D5DB" />
+                  </div>
+                  <div className="bg-[#EF4444] p-2 flex gap-2 flex-1">
+                    {[1, 2, 3, 4, 5, 6, 7, 8, 9].map(n => (
+                      <ClubIcon key={n} type="box" val={n} color={
+                        n === 1 ? '#EF4444' : n === 2 ? '#F97316' : n === 3 ? '#FBBF24' : 
+                        n === 4 ? '#22C55E' : n === 5 ? '#06B6D4' : n === 6 ? '#9333EA' : 
+                        n === 7 ? 'rainbow' : n === 8 ? '#D946EF' : '#94A3B8'
+                      } />
+                    ))}
+                  </div>
+                </div>
+
+                {/* Row 2: Inverted Digit Boxes */}
+                <div className="flex gap-2">
+                   <div className="bg-[#22C55E] p-2 flex gap-2">
+                      <ClubIcon type="box-inv" val={0} />
+                   </div>
+                   <div className="bg-[#EF4444] p-2 flex gap-2 flex-1">
+                      {[1, 2, 3, 4, 5, 6, 7, 8, 9].map(n => (
+                        <ClubIcon key={n} type="box-inv" val={n} />
+                      ))}
+                   </div>
+                </div>
+
+                {/* Row 3: Circular Badges 1-11 */}
+                <div className="flex gap-2 bg-[#EF4444] p-2">
+                  {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map(n => (
+                    <ClubIcon key={n} type="circle" val={n} special={n === 7 ? 'rainbow' : undefined} />
+                  ))}
+                </div>
+
+                {/* Row 4: Special Circles */}
+                <div className="flex gap-2 bg-[#EF4444] p-2">
+                  {[12, 13, 17, 19, 23, 29, 31, 'cube', 'rect', 'cross'].map((n) => (
+                    <ClubIcon key={typeof n === 'number' ? n : n} type="circle-special" val={n} />
+                  ))}
+                </div>
+
+                {/* Row 5: Actual Clubs (Toggleable) */}
+                <div className="flex gap-2">
+                   <div className="bg-[#22C55E] p-2 flex gap-2">
+                      <button onClick={() => setIsStepSquad(!isStepSquad)}>
+                        <ClubIcon type="club" val="step" active={isStepSquad} />
+                      </button>
+                   </div>
+                   <div className="bg-[#EF4444] p-2 flex gap-2 flex-1">
+                      <ClubIcon type="club" val="sq" />
+                      <ClubIcon type="club" val="dots" />
+                      <ClubIcon type="club" val="rect" />
+                      <div className="bg-[#22C55E] p-2 -my-2 flex items-center">
+                         <ClubIcon type="club" val="tray" />
+                      </div>
+                      <ClubIcon type="club" val="one" />
+                      <ClubIcon type="club" val="bars" />
+                      <ClubIcon type="club" val="chip" />
+                      <ClubIcon type="club" val="pad" />
+                   </div>
+                </div>
+              </div>
             </div>
-            <button onClick={() => setShowClubs(false)} className="mt-4 w-full bg-[#4C1D95] text-white py-2 rounded-lg font-bold hover:bg-[#2E1065]">Close</button>
           </motion.div>
         )}
 
