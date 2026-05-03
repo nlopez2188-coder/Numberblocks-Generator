@@ -192,6 +192,8 @@ export default function App() {
   const [multiplier, setMultiplier] = useState(1);
   const [showMultiplierMenu, setShowMultiplierMenu] = useState(false);
   const [isStepSquad, setIsStepSquad] = useState(false);
+  const [showSetPrompt, setShowSetPrompt] = useState(false);
+  const [promptInputValue, setPromptInputValue] = useState('');
 
   useEffect(() => {
     let interval: any;
@@ -214,11 +216,8 @@ export default function App() {
   const handleSidebarAction = (action: string) => {
     switch (action) {
       case 'set':
-        const setVal = prompt('Enter a number to set:');
-        if (setVal !== null) {
-          const val = parseFloat(setVal);
-          if (!isNaN(val)) setNum(val);
-        }
+        setShowSetPrompt(prev => !prev);
+        if (!showSetPrompt) setPromptInputValue('');
         break;
       case 'fof':
         setIsFOF(prev => !prev);
@@ -477,6 +476,56 @@ export default function App() {
               </div>
             </div>
             <button onClick={() => setShowInfo(false)} className="mt-6 w-full bg-[#166534] text-white py-2 rounded-lg font-bold hover:bg-[#064E3B]">Back to App</button>
+          </motion.div>
+        )}
+
+        {/* SET Prompt - Speech Bubble */}
+        {showSetPrompt && (
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 20 }}
+            className="absolute top-6 right-28 z-40 bg-white px-6 py-4 rounded-[40px] rounded-tr-none border-[6px] border-gray-300 shadow-2xl"
+          >
+            <p className="text-gray-600 font-extrabold text-4xl tracking-tighter">Number?</p>
+            {/* Pointer for speech bubble */}
+            <div className="absolute top-0 -right-6 w-8 h-8 bg-white border-l-[6px] border-t-[6px] border-gray-300 rotate-45 -translate-y-1.5" />
+          </motion.div>
+        )}
+
+        {/* SET Prompt - Bottom Input Bar */}
+        {showSetPrompt && (
+          <motion.div
+            initial={{ y: 200 }}
+            animate={{ y: 0 }}
+            exit={{ y: 200 }}
+            className="fixed bottom-10 left-1/2 -translate-x-1/2 w-[94%] z-50 bg-white border-[6px] border-pink-400/30 rounded-3xl p-3 flex items-center gap-4 shadow-[0_20px_50px_rgba(0,0,0,0.4)]"
+          >
+            <input
+              type="text"
+              autoFocus
+              value={promptInputValue}
+              onChange={(e) => setPromptInputValue(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  const val = parseFloat(promptInputValue);
+                  if (!isNaN(val)) setNum(val);
+                  setShowSetPrompt(false);
+                }
+              }}
+              className="flex-grow bg-transparent text-5xl font-black text-black outline-none px-6"
+              placeholder="|"
+            />
+            <button
+              onClick={() => {
+                const val = parseFloat(promptInputValue);
+                if (!isNaN(val)) setNum(val);
+                setShowSetPrompt(false);
+              }}
+              className="w-16 h-16 bg-[#fb7185] rounded-full flex items-center justify-center text-white border-b-8 border-red-800 active:translate-y-2 active:border-b-0 transition-all shadow-lg"
+            >
+              <div className="w-8 h-5 border-l-8 border-b-8 border-white -rotate-45 -translate-y-1" />
+            </button>
           </motion.div>
         )}
       </AnimatePresence>
