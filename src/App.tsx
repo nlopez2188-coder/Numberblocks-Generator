@@ -5,6 +5,16 @@ import { ChevronLeft, ChevronRight, Menu } from 'lucide-react';
 // --- Constants ---
 
 const CHARACTER_MODELS: Record<number, { color: string; eyes: number; columns: number; shape: string; label?: string; pattern?: string }> = {
+  [-1]: { color: '#7F1D1D', eyes: 1, columns: 1, shape: 'square', pattern: 'white-top' },
+  [-2]: { color: '#9A3412', eyes: 2, columns: 1, shape: 'rect', pattern: 'white-top' },
+  [-3]: { color: '#92400E', eyes: 3, columns: 1, shape: 'tall', pattern: 'white-top' },
+  [-4]: { color: '#14532D', eyes: 4, columns: 2, shape: 'square', pattern: 'white-top' },
+  [-5]: { color: '#1E3A8A', eyes: 5, columns: 1, shape: 'tall', pattern: 'white-top' },
+  [-6]: { color: '#581C87', eyes: 6, columns: 2, shape: 'tall', pattern: 'white-top' },
+  [-7]: { color: '#7E22CE', eyes: 7, columns: 1, shape: 'tall', pattern: 'rainbow' },
+  [-8]: { color: '#9D174D', eyes: 8, columns: 2, shape: 'square', pattern: 'white-top' },
+  [-9]: { color: '#374151', eyes: 9, columns: 3, shape: 'square', pattern: 'white-top' },
+  [-10]: { color: '#111827', eyes: 10, columns: 2, shape: 'tall', pattern: 'white-top' },
   1: { color: '#EF4444', eyes: 1, columns: 1, shape: 'square' },
   2: { color: '#F97316', eyes: 2, columns: 1, shape: 'rect' },
   3: { color: '#FBBF24', eyes: 3, columns: 1, shape: 'tall' },
@@ -180,6 +190,83 @@ const formatNumber = (n: number) => {
   return n.toLocaleString('en-US').replace(/,/g, ' ');
 };
 
+const renderUndergroundLayer = (num: number) => {
+  const absNum = Math.abs(num);
+  const layer = Math.floor(absNum);
+  
+  const layers = [
+    { name: 'roots', color: '#8B4513', decoration: 'root' },
+    { name: 'pipes', color: '#B45309', decoration: 'pipe' },
+    { name: 'zigzag', color: '#92400E', decoration: 'zigzag' },
+    { name: 'wood', color: '#3F6212', decoration: 'wood' },
+    { name: 'waves', color: '#1E3A8A', decoration: 'wave' },
+    { name: 'blobs', color: '#581C87', decoration: 'blob' },
+    { name: 'rainbow', color: '#7E22CE', decoration: 'rainbow' },
+    { name: 'wind', color: '#9D174D', decoration: 'wind' },
+    { name: 'rocks', color: '#374151', decoration: 'rock' },
+  ];
+
+  const currentLayer = layers[layer] || layers[layers.length - 1];
+
+  return (
+    <div className="absolute inset-0 transition-colors duration-500 overflow-hidden" style={{ backgroundColor: currentLayer.color }}>
+      {/* Texture overlays */}
+      <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/dark-matter.png')]" />
+      
+      {/* Decorative patterns based on the layer */}
+      {currentLayer.decoration === 'root' && (
+        <svg className="absolute inset-0 w-full h-full opacity-30" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <path d="M20,0 Q25,30 15,60 M50,0 Q45,40 55,80 M80,0 Q85,20 75,50" fill="none" stroke="#FDE68A" strokeWidth="1" />
+        </svg>
+      )}
+      {currentLayer.decoration === 'pipe' && (
+        <div className="absolute inset-0 opacity-20">
+          <div className="absolute top-1/4 left-0 w-full h-8 bg-gray-400 border-y-2 border-gray-600" />
+          <div className="absolute top-1/2 left-1/3 w-8 h-full bg-gray-400 border-x-2 border-gray-600" />
+        </div>
+      )}
+      {currentLayer.decoration === 'zigzag' && (
+        <div className="absolute inset-0 opacity-20 bg-[repeating-linear-gradient(45deg,transparent,transparent_20px,rgba(0,0,0,0.5)_20px,rgba(0,0,0,0.5)_40px)]" />
+      )}
+      {currentLayer.decoration === 'wood' && (
+        <div className="absolute inset-0 opacity-20 border-[30px] border-black/40 rounded-full scale-150" />
+      )}
+      {currentLayer.decoration === 'wave' && (
+        <div className="absolute inset-0 opacity-20">
+          {[...Array(6)].map((_, i) => (
+            <div key={i} className="w-full h-8 border-b-4 border-blue-300 rounded-[100%] mt-12" />
+          ))}
+        </div>
+      )}
+      {currentLayer.decoration === 'blob' && (
+        <div className="absolute inset-0 opacity-20 flex flex-wrap justify-around p-10">
+          {[...Array(12)].map((_, i) => (
+            <div key={i} className="w-20 h-10 bg-purple-900 rounded-full" />
+          ))}
+        </div>
+      )}
+      {currentLayer.decoration === 'rainbow' && (
+        <div className="absolute inset-0 opacity-40 bg-gradient-to-b from-red-500 via-yellow-500 via-green-500 to-purple-500" />
+      )}
+      {currentLayer.decoration === 'wind' && (
+        <div className="absolute inset-0 opacity-30 flex items-center justify-center">
+          <div className="w-64 h-64 border-b-8 border-pink-300 rounded-full animate-spin-slow rotate-45" />
+        </div>
+      )}
+      {currentLayer.decoration === 'rock' && (
+        <div className="absolute inset-0 opacity-20 bg-[radial-gradient(#000_10%,transparent_11%)] bg-[length:30px_30px]" />
+      )}
+
+      {/* Layer Number Indicator on the side like the image */}
+      <div className="absolute left-4 top-1/2 -translate-y-1/2 flex flex-col items-center">
+         <div className="w-4 h-1 bg-black" />
+         <span className="text-black font-black text-4xl -ml-12 italic tracking-tighter">-{layer + 1}</span>
+      </div>
+      <div className="absolute left-4 top-0 w-1 h-full bg-black/20" />
+    </div>
+  );
+};
+
 export default function App() {
   const [num, setNum] = useState(0);
   const [isJumping, setIsJumping] = useState(false);
@@ -263,24 +350,28 @@ export default function App() {
   return (
     <div className={`relative h-screen w-screen overflow-hidden font-sans select-none transition-colors duration-500 ${isFOF ? 'bg-[#1E1B4B]' : 'bg-[#E0F2FE]'}`}>
       {/* Background World */}
-      <div className={`absolute inset-0 z-0 transition-opacity duration-500 ${isFOF ? 'opacity-20' : 'opacity-100'}`}>
-        {/* Clouds */}
-        <div className="absolute top-20 left-10 opacity-60">
-          <div className="w-32 h-12 bg-white rounded-full blur-xl" />
-        </div>
-        <div className="absolute top-40 left-40 opacity-40">
-          <div className="w-48 h-16 bg-white rounded-full blur-2xl" />
-        </div>
-        <div className="absolute top-10 right-1/4 opacity-50">
-          <div className="w-40 h-14 bg-white rounded-full blur-xl" />
-        </div>
+      {num < 0 ? (
+        renderUndergroundLayer(num)
+      ) : (
+        <div className={`absolute inset-0 z-0 transition-opacity duration-500 ${isFOF ? 'opacity-20' : 'opacity-100'}`}>
+          {/* Clouds */}
+          <div className="absolute top-20 left-10 opacity-60">
+            <div className="w-32 h-12 bg-white rounded-full blur-xl" />
+          </div>
+          <div className="absolute top-40 left-40 opacity-40">
+            <div className="w-48 h-16 bg-white rounded-full blur-2xl" />
+          </div>
+          <div className="absolute top-10 right-1/4 opacity-50">
+            <div className="w-40 h-14 bg-white rounded-full blur-xl" />
+          </div>
 
-        {/* Rolling Hills */}
-        <div className="absolute bottom-0 w-full h-[60%] pointer-events-none">
-          <div className="absolute bottom-[-10%] left-[-20%] w-[140%] h-full bg-[#CCFBF1] rounded-[100%] border-t-8 border-[#99F6E4] rotate-[-5deg]" />
-          <div className="absolute bottom-[-20%] right-[-10%] w-[120%] h-full bg-[#DCFCE7] rounded-[100%] border-t-8 border-[#BBF7D0] rotate-[2deg]" />
+          {/* Rolling Hills */}
+          <div className="absolute bottom-0 w-full h-[60%] pointer-events-none">
+            <div className="absolute bottom-[-10%] left-[-20%] w-[140%] h-full bg-[#CCFBF1] rounded-[100%] border-t-8 border-[#99F6E4] rotate-[-5deg]" />
+            <div className="absolute bottom-[-20%] right-[-10%] w-[120%] h-full bg-[#DCFCE7] rounded-[100%] border-t-8 border-[#BBF7D0] rotate-[2deg]" />
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Overlays */}
       <AnimatePresence>
@@ -304,7 +395,7 @@ export default function App() {
               </div>
 
               {/* Grid Content */}
-              <div className="p-4 grid grid-rows-5 gap-2 overflow-x-auto no-scrollbar">
+              <div className="p-4 flex flex-col gap-2 overflow-x-auto no-scrollbar">
                 {/* Row 1: Digit Boxes (Green/Red background split) */}
                 <div className="flex gap-2">
                   <div className="bg-[#22C55E] p-2 flex gap-2">
@@ -321,7 +412,23 @@ export default function App() {
                   </div>
                 </div>
 
-                {/* Row 2: Inverted Digit Boxes */}
+                {/* Row 2: Negative Digit Boxes */}
+                <div className="flex gap-2">
+                  <div className="bg-[#22C55E] p-2 flex gap-2 invisible">
+                    <ClubIcon type="box" val={0} color="#D1D5DB" />
+                  </div>
+                  <div className="bg-[#EF4444] p-2 flex gap-2 flex-1">
+                    {[-1, -2, -3, -4, -5, -6, -7, -8, -9].map(n => (
+                      <ClubIcon key={n} type="box" val={n} color={
+                        n === -1 ? '#7F1D1D' : n === -2 ? '#9A3412' : n === -3 ? '#92400E' : 
+                        n === -4 ? '#14532D' : n === -5 ? '#1E3A8A' : n === -6 ? '#581C87' : 
+                        n === -7 ? 'rainbow' : n === -8 ? '#9D174D' : '#374151'
+                      } />
+                    ))}
+                  </div>
+                </div>
+
+                {/* Row 3: Inverted Digit Boxes */}
                 <div className="flex gap-2">
                    <div className="bg-[#22C55E] p-2 flex gap-2">
                       <ClubIcon type="box-inv" val={0} />
@@ -892,10 +999,10 @@ export default function App() {
           <div className="w-4 h-4 rounded-full bg-[#3B82F6] shadow-sm" />
           <input 
             type="range"
-            min="0"
+            min="-10"
             max="100"
             step="1"
-            value={Math.min(100, Math.max(0, num))}
+            value={Math.min(100, Math.max(-10, num))}
             onChange={handleSliderChange}
             className="flex-grow h-2 bg-[#10B981] rounded-full appearance-none cursor-pointer accent-[#3B82F6]"
           />
