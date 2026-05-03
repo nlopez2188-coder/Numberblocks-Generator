@@ -4,7 +4,7 @@ import { ChevronLeft, ChevronRight, Menu } from 'lucide-react';
 
 // --- Constants ---
 
-const CHARACTER_MODELS: Record<number, { color: string; eyes: number; columns: number; shape: string; label?: string }> = {
+const CHARACTER_MODELS: Record<number, { color: string; eyes: number; columns: number; shape: string; label?: string; pattern?: string }> = {
   1: { color: '#EF4444', eyes: 1, columns: 1, shape: 'square' },
   2: { color: '#F97316', eyes: 2, columns: 1, shape: 'rect' },
   3: { color: '#FBBF24', eyes: 3, columns: 1, shape: 'tall' },
@@ -93,7 +93,7 @@ const getButtonStyle = (type: string, isToggled?: boolean, label?: string) => {
   }
 };
 
-const ClubIcon = ({ type, val, color, special, active }: { type: string, val: string | number, color?: string, special?: string, active?: boolean }) => {
+const ClubIcon = ({ type, val, color, special, active }: { type: string, val: string | number, color?: string, special?: string, active?: boolean, key?: React.Key }) => {
   const baseClass = "w-12 h-12 flex items-center justify-center relative transition-transform hover:scale-110 active:scale-95 cursor-pointer";
   
   if (type === 'box') {
@@ -479,53 +479,75 @@ export default function App() {
           </motion.div>
         )}
 
-        {/* SET Prompt - Speech Bubble */}
+        {/* SET Prompt - Numeric Keypad Menu */}
         {showSetPrompt && (
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 20 }}
-            className="absolute top-6 right-28 z-40 bg-white px-6 py-4 rounded-[40px] rounded-tr-none border-[6px] border-gray-300 shadow-2xl"
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-[#EF4444] flex flex-col items-center justify-center p-4 overflow-hidden"
           >
-            <p className="text-gray-600 font-extrabold text-4xl tracking-tighter">Number?</p>
-            {/* Pointer for speech bubble */}
-            <div className="absolute top-0 -right-6 w-8 h-8 bg-white border-l-[6px] border-t-[6px] border-gray-300 rotate-45 -translate-y-1.5" />
-          </motion.div>
-        )}
+            {/* Background Glow */}
+            <div className="absolute inset-0 bg-[#EF4444] overflow-hidden">
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] opacity-20 bg-[radial-gradient(circle_at_center,white_0%,transparent_70%)]" />
+            </div>
 
-        {/* SET Prompt - Bottom Input Bar */}
-        {showSetPrompt && (
-          <motion.div
-            initial={{ y: 200 }}
-            animate={{ y: 0 }}
-            exit={{ y: 200 }}
-            className="fixed bottom-10 left-1/2 -translate-x-1/2 w-[94%] z-50 bg-white border-[6px] border-pink-400/30 rounded-3xl p-3 flex items-center gap-4 shadow-[0_20px_50px_rgba(0,0,0,0.4)]"
-          >
-            <input
-              type="text"
-              autoFocus
-              value={promptInputValue}
-              onChange={(e) => setPromptInputValue(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  const val = parseFloat(promptInputValue);
-                  if (!isNaN(val)) setNum(val);
-                  setShowSetPrompt(false);
-                }
-              }}
-              className="flex-grow bg-transparent text-5xl font-black text-black outline-none px-6"
-              placeholder="|"
-            />
-            <button
-              onClick={() => {
-                const val = parseFloat(promptInputValue);
-                if (!isNaN(val)) setNum(val);
-                setShowSetPrompt(false);
-              }}
-              className="w-16 h-16 bg-[#fb7185] rounded-full flex items-center justify-center text-white border-b-8 border-red-800 active:translate-y-2 active:border-b-0 transition-all shadow-lg"
-            >
-              <div className="w-8 h-5 border-l-8 border-b-8 border-white -rotate-45 -translate-y-1" />
-            </button>
+            <div className="relative z-10 flex flex-col items-center w-full max-w-2xl">
+              <h2 className="text-white text-6xl md:text-8xl leading-none font-black mb-8 italic tracking-tighter drop-shadow-[0_8px_0_rgba(0,0,0,0.5)] text-center">
+                SET NUMBER
+              </h2>
+              
+              {/* Number Display Box */}
+              <div className="bg-white w-full py-6 text-center text-black text-6xl md:text-[100px] leading-none font-black mb-8 border-[10px] border-black shadow-[inset_0_10px_30px_rgba(0,0,0,0.2),0_15px_0_rgba(0,0,0,0.1)] relative">
+                {promptInputValue || '0'}
+                <motion.div 
+                  animate={{ opacity: [1, 0] }}
+                  transition={{ repeat: Infinity, duration: 0.8 }}
+                  className="inline-block w-2 md:w-3 h-12 md:h-20 bg-blue-500 ml-2 align-middle"
+                />
+              </div>
+
+              {/* Numeric Keypad */}
+              <div className="grid grid-cols-3 gap-3 md:gap-4 w-full mb-8">
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9, '.', 0, 'DEL'].map((val) => (
+                  <button
+                    key={val}
+                    onClick={() => {
+                      if (val === 'DEL') {
+                        setPromptInputValue(prev => prev.slice(0, -1));
+                      } else {
+                        if (val === '.' && promptInputValue.includes('.')) return;
+                        setPromptInputValue(prev => prev + val);
+                      }
+                    }}
+                    className={`h-16 md:h-24 text-3xl md:text-5xl font-black rounded-lg border-[6px] border-black shadow-[0_8px_0_rgba(0,0,0,0.3)] active:translate-y-2 active:shadow-none transition-all flex items-center justify-center ${
+                      val === 'DEL' ? 'bg-[#991B1B] text-white' : 'bg-white text-black hover:bg-gray-100'
+                    }`}
+                  >
+                    {val}
+                  </button>
+                ))}
+              </div>
+
+              <div className="flex gap-4 w-full">
+                <button 
+                  onClick={() => setShowSetPrompt(false)}
+                  className="flex-1 bg-white py-4 md:py-6 text-black text-2xl md:text-4xl font-black border-[8px] border-black shadow-[0_10px_0_rgba(0,0,0,0.2)] hover:bg-gray-100 active:translate-y-2 active:shadow-none transition-all italic tracking-tight"
+                >
+                  CANCEL
+                </button>
+                <button 
+                  onClick={() => {
+                    const val = parseFloat(promptInputValue);
+                    if (!isNaN(val)) setNum(val);
+                    setShowSetPrompt(false);
+                  }}
+                  className="flex-[2] bg-[#15803d] py-4 md:py-6 text-white text-3xl md:text-5xl font-black border-[8px] border-white shadow-[0_15px_30px_rgba(0,0,0,0.4),0_10px_0_#166534] hover:bg-[#166534] active:translate-y-4 active:shadow-none transition-all italic tracking-tighter"
+                >
+                  ENTER
+                </button>
+              </div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
