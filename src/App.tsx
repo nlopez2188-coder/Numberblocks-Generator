@@ -50,6 +50,10 @@ const CHARACTER_MODELS: Record<number, { color: string; eyes: number; columns: n
   10000000000: { color: '#06B6D4', eyes: 10, columns: 18, shape: 'giant', pattern: 'void' },
   100000000000: { color: '#9333EA', eyes: 12, columns: 20, shape: 'giant', pattern: 'omega' },
   1000000000000: { color: '#FFFFFF', eyes: 14, columns: 24, shape: 'giant', pattern: 'trillion' },
+  // Additional milestones
+  49: { color: '#9333EA', eyes: 2, columns: 7, shape: 'square', pattern: 'seven-squared' },
+  64: { color: '#FBBF24', eyes: 2, columns: 8, shape: 'square', pattern: 'eight-squared' },
+  81: { color: '#06B6D4', eyes: 2, columns: 9, shape: 'square', pattern: 'nine-squared' },
 };
 
 const PAGES = [
@@ -916,6 +920,22 @@ export default function App() {
                    </div>
                 )}
 
+                {/* Individual Block Rendering (Experimental for smaller numbers or milestones) */}
+                {num > 0 && num <= 100 && (
+                   <div className="absolute inset-0 grid gap-[1px] opacity-20 pointer-events-none" 
+                        style={{ 
+                          gridTemplateColumns: `repeat(${CHARACTER_MODELS[num]?.columns || Math.ceil(Math.sqrt(num))}, 1fr)`,
+                          gridTemplateRows: `repeat(${Math.ceil(num / (CHARACTER_MODELS[num]?.columns || Math.ceil(Math.sqrt(num))))}, 1fr)`
+                        }}>
+                      {[...Array(Math.floor(num))].map((_, i) => (
+                        <div key={i} className="bg-black/40 border border-white/10" />
+                      ))}
+                   </div>
+                )}
+                {num > 100 && (
+                   <div className="absolute inset-0 opacity-10 pointer-events-none bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.2)_1px,transparent_1px)] bg-[size:8px_8px]" />
+                )}
+
                 {/* Eyes */}
                 <div className={`grid ${CHARACTER_MODELS[num].columns === 3 ? 'grid-cols-3' : CHARACTER_MODELS[num].columns === 2 ? 'grid-cols-2' : 'grid-cols-1'} gap-1 px-1 z-10`}>
                   {[...Array(CHARACTER_MODELS[num].eyes)].map((_, i) => (
@@ -1053,9 +1073,9 @@ export default function App() {
           <input 
             type="range"
             min="-9"
-            max="1000000"
+            max="1000000000"
             step="1"
-            value={Math.min(1000000, Math.max(-9, num))}
+            value={Math.min(1000000000, Math.max(-9, num))}
             onChange={handleSliderChange}
             className="flex-grow h-2 bg-[#10B981] rounded-full appearance-none cursor-pointer accent-[#3B82F6]"
           />
