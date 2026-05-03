@@ -1,0 +1,6 @@
+{
+  "name": "Numberblocks Simulator",
+  "description": "An interactive number counter inspired by Numberblocks, featuring increment/decrement controls, a value slider, and character animations.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}
