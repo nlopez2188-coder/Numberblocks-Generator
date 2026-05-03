@@ -33,7 +33,7 @@ const CHARACTER_MODELS: Record<number, { color: string; eyes: number; columns: n
 
 const PAGES = [
   [
-    { pos: { label: '+1/60', value: 1 / 60 }, neg: { label: '-1/60', value: -1 / 60 }, color: 'purple' },
+    { pos: { label: '+0.1666667', value: 0.1666667 }, neg: { label: '-0.1666667', value: -0.1666667 }, color: 'purple' },
     { pos: { label: '+1/2', value: 0.5 }, neg: { label: '-1/2', value: -0.5 }, color: 'orange' },
     { pos: { label: '+1', value: 1 }, neg: { label: '-1', value: -1 }, color: 'red' },
     { pos: { label: '+3', value: 3 }, neg: { label: '-3', value: -3 }, color: 'yellow' },
